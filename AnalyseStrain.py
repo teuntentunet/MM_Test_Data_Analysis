@@ -20,10 +20,10 @@ def calculateStrain(dataset: dict, test: str):
         df = pd.DataFrame(dataset[key][1:], columns=dataset[key][0])
         #display df
         print(df)
-        #Us is the value in the column dataset['unknown']
-        U_s = df['unknown'].astype(float).values
+        #Us is the value in the column dataset['Us']
+        U_s = df['Us'].astype(float).values
         #um is the values in the rest of the columns
-        U_m = df.drop(columns=['time', 'unknown', 'Temp_amb', 'Temp_mm']).astype(float).values
+        U_m = df.drop(columns=['time', 'Us', 'Temp_amb', 'Temp_mm']).astype(float).values
         measuredStrain = np.zeros_like(U_m)
         for i in range(U_m.shape[1]):
             measuredStrain[:, i] =  strainFormula(U_m[:, i], U_s, 2.12)
@@ -49,7 +49,7 @@ def calculateStrain(dataset: dict, test: str):
     #include headers like this DataSet[f"Test-{test}-{data_key}{pump}"] = np.vstack([data.columns.to_numpy(), DataSet[f"Test-{test}-{data_key}{pump}"]])
     for key in realStrainData.keys():
         df = pd.DataFrame(dataset[key][1:], columns=dataset[key][0])
-        headers = ['time', 'Temp_amb', 'Temp_mm'] + list(df.drop(columns=['time', 'unknown', 'Temp_amb', 'Temp_mm']).columns)
+        headers = ['time', 'Temp_amb', 'Temp_mm'] + list(df.drop(columns=['time', 'Us', 'Temp_amb', 'Temp_mm']).columns)
         realStrainData[key] = np.vstack([np.array(headers), realStrainData[key]])
     
     return realStrainData
@@ -105,7 +105,7 @@ def makeScatterPlotData(dataset: dict, test: str):
 
 if __name__ == "__main__":
     
-    test_letter = "A 21"
+    test_letter = "B 23"
     DataSet = LD.load_dataset(test_letter)
     realStrainData = calculateStrain(DataSet, test_letter)
     #save realStrainData to csv files

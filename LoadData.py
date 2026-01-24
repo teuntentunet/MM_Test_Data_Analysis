@@ -21,13 +21,13 @@ import os
 ChannelToNumber = [
 		[201, 'Temp_amb'],
 		[202, 'Temp_mm'],
-		[121, 'unknown'],
+		[121, 'Us'],
 		[132, 1],
 		[123, 2],
 		[124, 3],
 		[125, 4],
 		[126, 5],
-		[172, 6],
+		[127, 6],
 		[128, 7],
 		[129, 8],
 		[130, 9],
@@ -97,7 +97,7 @@ def load_dataset(test: str = "A"):
 
 
 if __name__ == "__main__":
-	dataset = load_dataset("A 21")
+	dataset = load_dataset("B 23")
 	#convert all arrayes in the dataset to csv files.
 	for key in dataset.keys():
 		np.savetxt(f"{key}_processed.csv", dataset[key], delimiter=",", fmt="%s")
