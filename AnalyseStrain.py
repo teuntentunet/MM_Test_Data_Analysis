@@ -65,7 +65,7 @@ def makeScatterPlotData(dataset: dict, test: str):
     key = list(dataset.keys())[0]
     numberOfPlotsToPlot = (len(dataset[key][0]) - 3) // 1  # minus 3 for time and temps
     idx = 0
-    for fig in range(numberOfPlotsToPlot // 9 + 1):
+    for fignum in range(numberOfPlotsToPlot // 9 + 1):
         # Create a 3x3 subplot grid
         fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(14, 10))
         
@@ -86,6 +86,7 @@ def makeScatterPlotData(dataset: dict, test: str):
                 idx += 1
                 plt.tight_layout()
     #add temperature plots
+        plt.savefig(f"Strain_Gauge_Plots_Test_{list(dataset.keys())[0]}_{fignum}.png")
     fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 8))
     #Temp_amb
     ax = axes[0]
@@ -104,8 +105,15 @@ def makeScatterPlotData(dataset: dict, test: str):
     ax.set_xlabel("Time [s]")
     ax.set_ylabel("Temperature [°C]")
 
+
     plt.tight_layout()
+    plt.savefig(f"Temperature_Plots_Test_{list(dataset.keys())[0]}.png")
     plt.show()
+    # #save all figures
+    
+    
+
+    
 
 
 
@@ -121,7 +129,7 @@ if __name__ == "__main__":
     DataSetkeys_2 = list(DataSet.keys())[9:17]
     DataSetkeys_3 = list(DataSet.keys())[17:25]
     DataSetkeys_4 = list(DataSet.keys())[25:28]
-    DataSetkeys_5 = list(DataSet.keys())[28;30]
+    DataSetkeys_5 = list(DataSet.keys())[28:]
     DataSetKeys = [DataSetkeys_1, DataSetkeys_2, DataSetkeys_3, DataSetkeys_4, DataSetkeys_5]
     
     for keyset in DataSetKeys:
