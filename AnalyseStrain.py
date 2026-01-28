@@ -15,11 +15,15 @@ def strainFormula(U_m, U_s, GaugeFactor: float = 2.12):
 
 def calculateStrain(dataset: dict, test: str):
     # Determine measured strain
+    
     measuredStrainData = {}
+    # cycles = [''] + [f"{i}." for i in range(1,6)]
+    # for cycle in cycles:
     for key in dataset.keys():
+        keyname = key.split('-')[-1]
+        cycle = keyname[0]
         df = pd.DataFrame(dataset[key][1:], columns=dataset[key][0])
         #display df
-        print(df)
         #Us is the value in the column dataset['Us']
         U_s = df['Us'].astype(float).values
         #um is the values in the rest of the columns
@@ -31,8 +35,11 @@ def calculateStrain(dataset: dict, test: str):
         measuredStrainData[key] = measuredStrain
     # Correct for initial offset which is the strains in the null test
     realStrainData = {}
-    nullStrains = measuredStrainData[f"Test-{test}-NULL"]
-    #average
+    print(measuredStrainData.keys())
+    #nullstrains is the first entry in measuredStrainData with 'NULL' in the key
+    nullStrains = measuredStrainData[[key for key in measuredStrainData.keys() if 'NULL' in key][0]]
+        
+        #average
     nullStrain = np.mean(nullStrains, axis=0)
 
     for key in measuredStrainData.keys():
@@ -51,11 +58,12 @@ def calculateStrain(dataset: dict, test: str):
         df = pd.DataFrame(dataset[key][1:], columns=dataset[key][0])
         headers = ['time', 'Temp_amb', 'Temp_mm'] + list(df.drop(columns=['time', 'Us', 'Temp_amb', 'Temp_mm']).columns)
         realStrainData[key] = np.vstack([np.array(headers), realStrainData[key]])
-    
+        
     return realStrainData
 
 def makeScatterPlotData(dataset: dict, test: str):
-    numberOfPlotsToPlot = (len(dataset[f"Test-{test}-NULL"][0]) - 3) // 1  # minus 3 for time and temps
+    key = list(dataset.keys())[0]
+    numberOfPlotsToPlot = (len(dataset[key][0]) - 3) // 1  # minus 3 for time and temps
     idx = 0
     for fig in range(numberOfPlotsToPlot // 9 + 1):
         # Create a 3x3 subplot grid
@@ -105,12 +113,25 @@ def makeScatterPlotData(dataset: dict, test: str):
 
 if __name__ == "__main__":
     
-    test_letter = "B 23"
+    test_letter = "A 28"
     DataSet = LD.load_dataset(test_letter)
-    realStrainData = calculateStrain(DataSet, test_letter)
-    #save realStrainData to csv files
-    for key in realStrainData.keys():
-        np.savetxt(f"{key}_strain.csv", realStrainData[key], delimiter=",", fmt="%s")
-        print(f"Saved {key}_strain.csv")
+    
+    # split dataset in cycles
+    DataSetkeys_1 = list(DataSet.keys())[0:9]
+    DataSetkeys_2 = list(DataSet.keys())[9:17]
+    DataSetkeys_3 = list(DataSet.keys())[17:25]
+    DataSetkeys_4 = list(DataSet.keys())[25:28]
+    DataSetkeys_5 = list(DataSet.keys())[28;30]
+    DataSetKeys = [DataSetkeys_1, DataSetkeys_2, DataSetkeys_3, DataSetkeys_4, DataSetkeys_5]
+    
+    for keyset in DataSetKeys:
+        current_dataset = {key: DataSet[key] for key in keyset}
+        realStrainData = calculateStrain(current_dataset, test_letter)
+        # print('current dataset=' , current_dataset.keys())
+        analyseStrain(current_dataset, test=test_letter)
+        #save realStrainData to csv files
+        
+        for key in realStrainData.keys():
+            np.savetxt(f"{key}_strain.csv", realStrainData[key], delimiter=",", fmt="%s")
+            print(f"Saved {key}_strain.csv")
 
-    analyseStrain(DataSet, test_letter)
