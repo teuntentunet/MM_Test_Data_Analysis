@@ -35,7 +35,6 @@ def calculateStrain(dataset: dict, test: str):
         measuredStrainData[key] = measuredStrain
     # Correct for initial offset which is the strains in the null test
     realStrainData = {}
-    print(measuredStrainData.keys())
     #nullstrains is the first entry in measuredStrainData with 'NULL' in the key
     nullStrains = measuredStrainData[[key for key in measuredStrainData.keys() if 'NULL' in key][0]]
         
@@ -84,6 +83,9 @@ def makeScatterPlotData(dataset: dict, test: str):
                     ax.set_ylabel("Strain")
                     
                 idx += 1
+                #add grid
+                ax.grid(True)
+
                 plt.tight_layout()
     #add temperature plots
         plt.savefig(f"Strain_Gauge_Plots_Test_{list(dataset.keys())[0]}_{fignum}.png")
@@ -96,6 +98,7 @@ def makeScatterPlotData(dataset: dict, test: str):
     ax.legend()
     ax.set_xlabel("Time [s]")
     ax.set_ylabel("Temperature [°C]")
+    ax.grid(True)
     #Temp_mm
     ax = axes[1]
     for key in dataset.keys():
@@ -105,10 +108,10 @@ def makeScatterPlotData(dataset: dict, test: str):
     ax.set_xlabel("Time [s]")
     ax.set_ylabel("Temperature [°C]")
 
-
+    ax.grid(True)
     plt.tight_layout()
     plt.savefig(f"Temperature_Plots_Test_{list(dataset.keys())[0]}.png")
-    plt.show()
+    # plt.show()
     # #save all figures
     
     
@@ -128,9 +131,8 @@ if __name__ == "__main__":
     DataSetkeys_1 = list(DataSet.keys())[0:9]
     DataSetkeys_2 = list(DataSet.keys())[9:17]
     DataSetkeys_3 = list(DataSet.keys())[17:25]
-    DataSetkeys_4 = list(DataSet.keys())[25:28]
-    DataSetkeys_5 = list(DataSet.keys())[28:]
-    DataSetKeys = [DataSetkeys_1, DataSetkeys_2, DataSetkeys_3, DataSetkeys_4, DataSetkeys_5]
+    DataSetkeys_4 = list(DataSet.keys())[25:]
+    DataSetKeys = [DataSetkeys_1, DataSetkeys_2, DataSetkeys_3, DataSetkeys_4]
     
     for keyset in DataSetKeys:
         current_dataset = {key: DataSet[key] for key in keyset}
