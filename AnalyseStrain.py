@@ -36,13 +36,14 @@ def calculateStrain(dataset: dict, test: str):
     # Correct for initial offset which is the strains in the null test
     realStrainData = {}
     #nullstrains is the first entry in measuredStrainData with 'NULL' in the key
-    nullStrains = measuredStrainData[[key for key in measuredStrainData.keys() if 'NULL' in key][0]]
+    if any('NULL' in key for key in measuredStrainData.keys()):
+        nullStrains = measuredStrainData[[key for key in measuredStrainData.keys() if 'NULL' in key][0]]
         
         #average
-    nullStrain = np.mean(nullStrains, axis=0)
+        nullStrain = np.mean(nullStrains, axis=0)
 
-    for key in measuredStrainData.keys():
-        realStrainData[key] = measuredStrainData[key] - nullStrain
+        for key in measuredStrainData.keys():
+            realStrainData[key] = measuredStrainData[key] - nullStrain
     
     #add temperature columns back and time column
     for key in realStrainData.keys():
@@ -123,17 +124,46 @@ def makeScatterPlotData(dataset: dict, test: str):
 
 
 if __name__ == "__main__":
-    
-    test_letter = "A 28"
+    'Change this part to '
+    test_letter = "B 27"
     DataSet = LD.load_dataset(test_letter)
-    
-    # split dataset in cycles
-    DataSetkeys_1 = list(DataSet.keys())[0:9]
-    DataSetkeys_2 = list(DataSet.keys())[9:17]
-    DataSetkeys_3 = list(DataSet.keys())[17:25]
-    DataSetkeys_4 = list(DataSet.keys())[25:]
-    DataSetKeys = [DataSetkeys_1, DataSetkeys_2, DataSetkeys_3, DataSetkeys_4]
-    
+    print ("Loaded dataset keys:", DataSet.keys())
+
+
+
+
+    # # For test Nullextra
+    # DataSetKeys = [list(DataSet.keys())]
+
+    # For Test A 28,C29, B28 group by cycles
+    # DataSetkeys_1 = list(DataSet.keys())[0:9]
+    # DataSetkeys_2 = list(DataSet.keys())[9:17]
+    # DataSetkeys_3 = list(DataSet.keys())[17:25]
+    # DataSetkeys_4 = list(DataSet.keys())[25:]
+    # DataSetKeys = [DataSetkeys_1, DataSetkeys_2, DataSetkeys_3, DataSetkeys_4]
+
+
+    #For Test A28, C29, B28 group by loading condition
+    DataSetKeys_NULL = []
+    DataSetKeys_25 = []
+    DataSetKeys_50 = []
+    DataSetKeys_75 = []
+    DataSetKeys_100 = []
+    for key in DataSet.keys():
+        if 'NULL' in key:
+            DataSetKeys_NULL.append(key)
+        if '25' in key:
+            DataSetKeys_25.append(key)
+        if '50' in key:
+            DataSetKeys_50.append(key)
+        if '75' in key:
+            DataSetKeys_75.append(key)
+        if '100' in key:
+            DataSetKeys_100.append(key)
+    DataSetKeys = [DataSetKeys_NULL, DataSetKeys_25, DataSetKeys_50, DataSetKeys_75, DataSetKeys_100]
+
+
+
     for keyset in DataSetKeys:
         current_dataset = {key: DataSet[key] for key in keyset}
         realStrainData = calculateStrain(current_dataset, test_letter)

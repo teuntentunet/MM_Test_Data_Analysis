@@ -56,7 +56,9 @@ DataKeys = [
 	"100",
 	"BREAKING",
 	"RESIDUAL",
-	"RES"
+	"RES",
+	"Standing",
+	"Onside"
 ]
 
 DataSet = {
@@ -101,7 +103,7 @@ def load_dataset(test: str = "A"):
 
 
 if __name__ == "__main__":
-	dataset = load_dataset("A 28")
+	dataset = load_dataset("B 27")
 	#convert all arrayes in the dataset to csv files.
 	for key in dataset.keys():
 		np.savetxt(f"{key}_processed.csv", dataset[key], delimiter=",", fmt="%s")
